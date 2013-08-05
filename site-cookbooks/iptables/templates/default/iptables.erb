@@ -1,0 +1,73 @@
+*filter
+:INPUT   ACCEPT
+:FORWARD ACCEPT
+:OUTPUT  ACCEPT
+# ユーザー定義チェーン -を指定するらしい
+:RH-Firewall-1-INPUT -
+
+#INPUTとFORWARDをユーザー定義チェーンに束ねる
+-A INPUT -j RH-Firewall-1-INPUT
+-A FORWARD -j RH-Firewall-1-INPUT
+
+# OUTPUTは基本的にOK
+
+### ルール
+# 基本は、-A チェーン名 マッチング条件 -j ターゲット
+#    -A チェーン名 : チェーンに新たなルールを追加
+#    -j（--jump） ターゲット : 条件したパケットをどうするか指定
+#                              ターゲットには、ACCEPT（許可）/DROP（破棄）/REJECT（拒否）ユーザ定義チェーンなどなどを指定
+#
+# マッチング条件の一部
+# 頭に"!"をつけると、notという意味
+#    -i（--in-interface） 受信インタフェース : filterテーブルでは、INPUT/FORWARDチェーンで使用可能
+#    -o（--out-interface） 送信インタフェース : filterテーブルでは、OUTPUT/FORWARDチェーンで使用可能
+#    -p（--protocol） プロトコルまたはプロトコル番号 : 指定できるプロトコルは、tcp/udp/icmp/all
+#    -s（--source、--src） 送信元アドレス : "192.168.0.1"、"192.168.0.0/24"、"192.168.0.0/255.255.255.0"のように指定
+#    -d（--destination、--dst） 送信先アドレス : "192.168.0.1"、"192.168.0.0/24"、"192.168.0.0/255.255.255.0"のように指定
+#
+# 以下は拡張されたマッチングの一部
+# 頭に"!"をつけると、notという意味
+#    -m tcp --sport（--source-port） TCP送信元ポート :  "-p tcp"のとき使用可能、ポート範囲は"0:1023"のように指定
+#    -m tcp --dport（--destination-port） TCP送信先ポート :  "-p tcp"のとき使用可能、ポート範囲は"0:1023"のように指定
+#    -m udp --sport（--source-port） UDP送信元ポート :  "-p udp"のとき使用可能、ポート範囲は"0:1023"のように指定
+#    -m udp --dport（--destination-port） UDP送信先ポート :  "-p udp"のとき使用可能、ポート範囲は"0:1023"のように指定
+#    -m state --state 接続状態 : 接続状態には、NEW（新規）/ESTABLISHED（接続中）/RELATED（既存の接続に関係？）/INVALID（その他）を指定
+
+# loは自身への通信
+-A RH-Firewall-1-INPUT -i lo -j ACCEPT
+
+# icmpパケットは許可(通信が失敗したときに起きるらしい)
+# それ以外もあるかも
+-A RH-Firewall-1-INPUT -p icmp --icmp-type any -j ACCEPT
+
+# 50,51はEncap Security PayloadとAuthentication Headerというプロトコル
+# IPsecっていう暗号通信を行うための規格で使う
+-A RH-Firewall-1-INPUT -p 50 -j ACCEPT
+-A RH-Firewall-1-INPUT -p 51 -j ACCEPT
+
+# マルチキャストDNSで使う
+# ローカルなネットワークでこのポートにUDPで投げて該当するマシンが反応する
+# -A RH-Firewall-1-INPUT -p udp --dport 5353 -d 224.0.0.251 -j ACCEPT
+
+# 印刷関係らしい閉じておく
+# -A RH-Firewall-1-INPUT -p udp -m udp --dport 631 -j ACCEPT
+# -A RH-Firewall-1-INPUT -p tcp -m tcp --dport 631 -j ACCEPT
+
+# すでに通信が確立しているものはOK
+-A RH-Firewall-1-INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# SSH, HTTP, FTP1, FTP2, MySQL
+# SHHやHTTPの新規の通信を通す
+-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 22 -j ACCEPT
+-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 80    -j ACCEPT
+
+# FTPは使わない
+# -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 20    -j ACCEPT
+# -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 21    -j ACCEPT
+# MYSQL
+# -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 3306  -j ACCEPT
+
+# それ以外はREJECT
+-A RH-Firewall-1-INPUT -j REJECT --reject-with icmp-host-prohibited
+
+COMMIT
