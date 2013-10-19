@@ -1,0 +1,16 @@
+{
+    "nginx": {
+	"hostname" : "192.168.7.13",
+	"port" : 80
+    },
+    "setting": {
+        "ssh_port": 13323,
+	"password_auth": "no",
+	"permit_root": "no"
+    },
+    "run_list":[
+	"recipe[yum::epel]",
+	"recipe[setting]",
+	"recipe[iptables]"
+    ]
+}

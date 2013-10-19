@@ -1,0 +1,6 @@
+Port <%= node['setting']['ssh_port'] %>
+Protocol 2
+PasswordAuthentication  <%= node['setting']['password_auth'] %>
+PermitRootLogin <%= node['setting']['permit_root'] %>
+UseDNS no
+UsePAM no
