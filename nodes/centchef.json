@@ -9,7 +9,6 @@
 	"permit_root": "no"
     },
     "run_list":[
-	"recipe[yum::epel]",
 	"recipe[setting]",
 	"recipe[iptables]"
     ]
