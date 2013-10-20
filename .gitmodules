@@ -1,3 +1,0 @@
-[submodule "cookbooks/yum"]
-	path = cookbooks/yum
-	url = https://github.com/atomic-penguin/cookbook-yumrepo.git
