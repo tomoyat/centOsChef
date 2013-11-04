@@ -26,6 +26,7 @@ data_ids.each do |id|
     uid u['uid']
     home u['home']
     password u['password']
+    shell u['shell']
     supports :manage_home => true # make hoem directory
   end
   group u['group_name'] do
@@ -45,6 +46,22 @@ data_ids.each do |id|
     mode 0600
     content "#{u['ssh_key']}"
     not_if { ::File.exists?("#{authorized_keys_file}") }
+  end
+  zshrc_file = "#{u['home']}/.zshrc"
+  template zshrc_file do
+    source "zshrc.erb"
+    owner u['user_name']
+    group u['user_name']
+    mode 0644
+    not_if { ::File.exists?(zshrc_file) }
+  end
+  screenrc_file = "#{u['home']}/.screenrc"
+  template screenrc_file do
+    source "screenrc.erb"
+    owner u['user_name']
+    group u['user_name']
+    mode 0644
+    not_if { ::File.exists?(screenrc_file) }
   end
 end
 

@@ -10,12 +10,15 @@ package "git" do
   action :install
 end
 
-
 package "zsh" do
   action :install
 end
 
 package "tmux" do
+  action :install
+end
+
+package "screen" do
   action :install
 end
 

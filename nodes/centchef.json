@@ -11,6 +11,7 @@
     "run_list":[
 	"recipe[setting]",
 	"recipe[iptables]",
-    "recipe[usersetting]"
+	"recipe[base]",
+	"recipe[usersetting]"
     ]
 }
