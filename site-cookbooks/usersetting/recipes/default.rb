@@ -53,7 +53,6 @@ data_ids.each do |id|
     owner u['user_name']
     group u['user_name']
     mode 0644
-    not_if { ::File.exists?(zshrc_file) }
   end
   screenrc_file = "#{u['home']}/.screenrc"
   template screenrc_file do
@@ -61,7 +60,13 @@ data_ids.each do |id|
     owner u['user_name']
     group u['user_name']
     mode 0644
-    not_if { ::File.exists?(screenrc_file) }
+  end
+  vimrc_file = "#{u['home']}/.vimrc"
+  template vimrc_file do
+    source "vimrc.erb"
+    owner u['user_name']
+    group u['user_name']
+    mode 0644
   end
 end
 

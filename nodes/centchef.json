@@ -12,6 +12,7 @@
 	"recipe[setting]",
 	"recipe[iptables]",
 	"recipe[base]",
-	"recipe[usersetting]"
+	"recipe[usersetting]",
+	"recipe[mongodb]"
     ]
 }

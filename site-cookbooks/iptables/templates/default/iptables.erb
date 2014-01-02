@@ -61,6 +61,11 @@
 # -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 22    -j ACCEPT
 -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 80    -j ACCEPT
 -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport <%= node['setting']['ssh_port'] %>    -j ACCEPT
+# node
+-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 3000    -j ACCEPT
+
+# mongodb
+-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 27017    -j ACCEPT
 
 # FTPは使わない
 # -A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 20    -j ACCEPT

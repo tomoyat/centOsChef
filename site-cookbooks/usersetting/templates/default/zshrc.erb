@@ -21,7 +21,7 @@ setopt hist_reduce_blanks # 余分なスペースを削除してヒストリに�
 #補完システム
 autoload -U compinit
 compinit
-
+setopt extended_glob
 ### Prompt ###
 # プロンプトに色を付ける
 autoload -U colors
@@ -47,8 +47,8 @@ alias ls='ls -1 --color=auto'
 
 export PATH=$PATH:$HOME/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/local/lib
 export EDITOR=vim    # エディタをvimに設定
-export PAGER="lv -c"
-export GIT_PAGER="lv -c"
+export PAGER="less"
+export GIT_PAGER="less"
 
 case $HOST in
     *)
@@ -58,4 +58,3 @@ esac
 ### Alias
 alias screen='screen -U'
 alias grep='grep --color'
-alias lv='lv -c'
